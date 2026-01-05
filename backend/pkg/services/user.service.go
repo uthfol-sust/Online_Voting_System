@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"pollvoting/pkg/models"
 	"pollvoting/pkg/repositories"
 	"pollvoting/pkg/utils"
@@ -41,8 +40,6 @@ func (s *userService) Login(email, password string) (*models.User, string, strin
 	if user == nil {
 		return nil, "", "", errors.New("user not found!")
 	}
-
-	fmt.Println(user.Password)
 
 	isValid := utils.ChcekPassword(user.Password, password)
 	if isValid == false {
@@ -125,8 +122,6 @@ func (s *userService) Refresh(refreshToken string) (string, string, error) {
 		return "", "", errors.New("invalid refresh token")
 	}
 
-	fmt.Println(claims.ID)
-
 	storedToken, err := s.userRepo.GetTokenFromRDB(claims.ID)
 	if err != nil || storedToken == "" {
 		return "", "", errors.New("refresh token not found or revoked")
@@ -145,4 +140,3 @@ func (s *userService) Refresh(refreshToken string) (string, string, error) {
 
 	return newAccess, newRefresh, nil
 }
-

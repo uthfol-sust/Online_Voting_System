@@ -11,7 +11,6 @@ import (
 
 type PollOptionsRepository interface {
 	Create(options *models.PollOption) (*models.PollOption, error)
-	//Update(options *models.PollOption) (*models.PollOption, error)
 	Delete(ID int64) error
 }
 
@@ -47,38 +46,6 @@ func (r *pollOptionsRepository) Create(options *models.PollOption) (*models.Poll
 	}
 
 	cacheKey := fmt.Sprintf("poll:%d", options.PollID)
-	_ = r.redis_db.Del(database.Ctx, cacheKey).Err()
-
-	return options, nil
-}
-
-func (r *pollOptionsRepository) Update(options *models.PollOption) (*models.PollOption, error) {
-
-	query := `
-		UPDATE poll_options
-		SET option_text = $1,
-		    option_image = $2,
-			score = $3
-		WHERE option_id = $4
-		RETURNING poll_id;
-	`
-
-	var pollID int64
-
-	err := r.post_db.QueryRow(
-		query,
-		options.OptionText,
-		options.Image,
-		options.ID,
-	).Scan(&pollID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	options.PollID = pollID
-
-	cacheKey := fmt.Sprintf("poll:%d", pollID)
 	_ = r.redis_db.Del(database.Ctx, cacheKey).Err()
 
 	return options, nil

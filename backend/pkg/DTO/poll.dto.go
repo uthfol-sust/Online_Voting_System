@@ -29,3 +29,14 @@ type OptionResponse struct {
 	Score      int    `json:"score"`
 	OptionText string `json:"option_text"`
 }
+
+type PollResultResponse struct {
+	PollID  int64              `json:"poll_id"`
+	Results []PollOptionResult `json:"results"`
+}
+
+type PollOptionResult struct {
+	OptionID int64 `json:"option_id"`
+	Votes    int64 `json:"votes"`
+}
+

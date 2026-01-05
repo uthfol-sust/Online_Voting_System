@@ -1,10 +1,16 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"pollvoting/pkg/utils"
 	"strings"
 )
+
+type contextKey string
+
+const userIDKey contextKey = "userID"
+
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,12 +28,23 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := parts[1]
-		_, err := utils.VerifyByJWT(token)
+		claims, err := utils.VerifyByJWT(token)
 		if err != nil {
 			http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(r.Context(), userIDKey, claims.ID)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+func GetUserID(ctx context.Context) int64 {
+	userID, ok := ctx.Value(userIDKey).(int64)
+	if !ok {
+		return 0
+	}
+	return userID
+}
+

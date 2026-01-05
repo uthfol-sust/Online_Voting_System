@@ -7,7 +7,14 @@ import (
 	"pollvoting/pkg/middleware"
 )
 
-func Router(router *http.ServeMux, userC controllers.UserController , pollC controllers.PollController, optionsC controllers.OptionController) {
+func Router(
+	router *http.ServeMux,
+	userC controllers.UserController, 
+	pollC controllers.PollController, 
+	optionsC controllers.OptionController,
+	voteC  controllers.CastVoteController,
+) {
+
 	manager := middleware.Manager{}
 	manager.Use(middleware.CorsMiddleware)
 
@@ -19,4 +26,5 @@ func Router(router *http.ServeMux, userC controllers.UserController , pollC cont
 	UserRouter(router,userC, manager)
 	PollsRouter(router, pollC, manager)
 	OptionsRoutes(router, optionsC, manager)
+	VoteRoutes(router, voteC, manager)
 }
