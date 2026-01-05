@@ -16,7 +16,7 @@ type UserProfileResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type UserDeleteResponse struct {
+type DeleteResponse struct {
     ID      int64  `json:"id"`
     Message string `json:"message"`
 }

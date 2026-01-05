@@ -12,7 +12,7 @@ import (
 type PollController interface {
 	CreatePoll(w http.ResponseWriter, r *http.Request)
 	GetPolls(w http.ResponseWriter, r *http.Request)
-	GetPollDetails(w http.ResponseWriter, r *http.Request)
+	PollWithOptions(w http.ResponseWriter, r *http.Request)
 	UpdatePoll(w http.ResponseWriter, r *http.Request)
 	DeletePoll(w http.ResponseWriter, r *http.Request)
 }
@@ -69,26 +69,16 @@ func (c *pollController) GetPolls(w http.ResponseWriter, r *http.Request) {
 	utils.JSONResponse(w, 200, "Load all the polls successfully", pollList)
 }
 
-func (c *pollController) GetPollDetails(w http.ResponseWriter, r *http.Request) {
+func (c *pollController) PollWithOptions(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(r.PathValue("id"))
 
-	poll, err := c.service.GetPollDetails(int64(id))
+	poll, err := c.service.PollWithOptions(int64(id))
 	if err != nil {
 		utils.ErrorJSON(w, 500, err)
 		return
 	}
 
-	res := dto.PollDetails{
-		ID:          poll.ID,
-		Title:       poll.Title,
-		Description: poll.Description,
-		CreatedBy:   poll.CreatedBy,
-		IsActive:    poll.IsActive,
-		ExpiresAt:   *poll.ExpiresAt,
-		CreatedAt:   poll.CreatedAt,
-	}
-
-	utils.JSONResponse(w, 201, "Poll is found successfully!", res)
+	utils.JSONResponse(w, 200, "Poll is found successfully!", poll)
 }
 
 func (c *pollController) UpdatePoll(w http.ResponseWriter, r *http.Request) {

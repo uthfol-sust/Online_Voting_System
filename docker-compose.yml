@@ -36,7 +36,8 @@ services:
       start_period: 10s  
 
   redis:
-    image: redis:7
+    build: 
+      context: ./rdb
     container_name: redis
     ports:
       - "6379:6379"

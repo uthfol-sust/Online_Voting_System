@@ -42,17 +42,21 @@ func Serve() {
 
 	//repositories
 	userRepo := repositories.NewUserRepository(db, rdb.Client)
-	pollRepo := repositories.NewPollRepository(db)
+	pollRepo := repositories.NewPollRepository(db, rdb.Client)
+	optionRepo := repositories.NewPollOptionsRepository(db, rdb.Client)
 
 	//service
 	userService := services.NewUserService(userRepo)
 	pollService := services.NewPollService(pollRepo)
+	optionService := services.NewOptionService(optionRepo)
 
 	//controller
 	userControllers := controllers.NewUserController(userService)
 	pollControllers := controllers.NewPollControllers(pollService)
+	optionController := controllers.NewOptionController(optionService)
 
-	routes.Router(mux, userControllers,pollControllers)
+
+	routes.Router(mux, userControllers,pollControllers, optionController)
 
 	fmt.Println("Server running on port", config.LocalConfig.AppPort)
 	log.Fatal(http.ListenAndServe(config.LocalConfig.AppPort, mux))

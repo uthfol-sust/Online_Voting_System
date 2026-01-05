@@ -53,6 +53,20 @@ func AutoMigrate(db *sql.DB) error {
 					ON DELETE CASCADE
 			);`,
 		},
+		{ //3
+			"poll_options",
+			`CREATE TABLE IF NOT EXISTS poll_options (
+               option_id SERIAL PRIMARY KEY,
+			   poll_id   INT NOT NULL,
+			   option_image VARCHAR(255),
+			   score   INT DEFAULT 0,
+			   option_text VARCHAR(155) NOT NULL,
+
+			   CONSTRAINT fk_poll_id FOREIGN KEY(poll_id)
+			                        REFERENCES polls(poll_id)
+									ON DELETE CASCADE
+			);`,
+		},
 	}
 
 	for _, m := range migration {

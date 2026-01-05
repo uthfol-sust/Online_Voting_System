@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"pollvoting/pkg/models"
+	"time"
+)
 
 type PollDetails struct {
 	ID          int64     `json:"poll_id"`
@@ -12,4 +15,17 @@ type PollDetails struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
+type PollResponse struct {
+	ID          int64                 `json:"id"`
+	Title       string              `json:"title"`
+	Description string              `json:"description"`
+	IsActive    bool                `json:"is_active"`
+	ExpiresAt   time.Time           `json:"expires_at"`
+	Options     []models.PollOption `json:"options"`
+}
 
+type OptionResponse struct {
+	ID         int64    `json:"option_id"`
+	Score      int    `json:"score"`
+	OptionText string `json:"option_text"`
+}

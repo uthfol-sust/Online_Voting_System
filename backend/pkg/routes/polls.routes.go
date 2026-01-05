@@ -30,7 +30,7 @@ func PollsRouter(router *http.ServeMux, controllers controllers.PollController, 
 
 	router.Handle("GET /polls/{id}",
 		manager.With(
-			http.HandlerFunc(controllers.GetPollDetails),
+			http.HandlerFunc(controllers.PollWithOptions),
 			middleware.AuthMiddleware,
 		))
 

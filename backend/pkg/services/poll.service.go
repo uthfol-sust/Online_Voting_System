@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	dto "pollvoting/pkg/DTO"
 	"pollvoting/pkg/models"
 	"pollvoting/pkg/repositories"
 )
@@ -12,6 +13,7 @@ type PollService interface {
 	GetPollDetails(id int64) (*models.Poll, error)
 	UpdatePoll(id int64, poll *models.Poll) (*models.Poll, error)
 	DeletePoll(id int64) error
+	PollWithOptions(pollID int64) (*dto.PollResponse, error)
 }
 
 type pollService struct {
@@ -47,7 +49,7 @@ func (s *pollService) UpdatePoll(id int64, poll *models.Poll) (*models.Poll, err
 		return nil, err
 	}
 
-	if isExist == nil{
+	if isExist == nil {
 		return nil, errors.New("this polls is not Created")
 	}
 
@@ -60,7 +62,7 @@ func (s *pollService) UpdatePoll(id int64, poll *models.Poll) (*models.Poll, err
 	if poll.IsActive {
 		isExist.IsActive = poll.IsActive
 	}
-	if poll.ExpiresAt !=nil{
+	if poll.ExpiresAt != nil {
 		isExist.ExpiresAt = poll.ExpiresAt
 	}
 
@@ -79,3 +81,18 @@ func (s *pollService) DeletePoll(id int64) error {
 
 	return s.reposi.DeletePoll(id)
 }
+
+func (s *pollService) PollWithOptions(pollID int64) (*dto.PollResponse, error) {
+
+	poll, err := s.reposi.PollWithOptionsFromRedis(pollID)
+	if err != nil {
+		return nil, err
+	}
+
+	if poll != nil {
+		return poll, nil 
+	}
+
+	return s.reposi.PollWithOptionsFromDB(pollID)
+}
+

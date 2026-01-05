@@ -139,7 +139,7 @@ func (c *userController) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := dto.UserDeleteResponse{
+	res := dto.DeleteResponse{
 		ID:      int64(id),
 		Message: "User deleted successfully",
 	}

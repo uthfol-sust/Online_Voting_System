@@ -30,7 +30,7 @@ func GenerateAccessToken(user *models.User) (string, error) {
 		Role: user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "pollVoting",
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * time.Minute)),
 		},
 	}
 
