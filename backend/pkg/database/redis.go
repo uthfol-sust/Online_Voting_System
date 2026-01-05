@@ -11,6 +11,8 @@ type RedisStore struct {
 	Client *redis.Client
 }
 
+var Ctx = context.Background()
+
 func NewRedis(addr, password string) *RedisStore {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         addr,

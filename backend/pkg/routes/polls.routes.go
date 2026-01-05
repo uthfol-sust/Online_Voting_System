@@ -19,25 +19,30 @@ func PollsRouter(router *http.ServeMux, controllers controllers.PollController, 
 	router.Handle("POST /polls",
 		manager.With(
 			http.HandlerFunc(controllers.CreatePoll),
+			middleware.AuthMiddleware,
 		))
 
 	router.Handle("GET /polls",
 		manager.With(
 			http.HandlerFunc(controllers.GetPolls),
+			middleware.AuthMiddleware,
 		))
 
 	router.Handle("GET /polls/{id}",
 		manager.With(
 			http.HandlerFunc(controllers.GetPollDetails),
+			middleware.AuthMiddleware,
 		))
 
 	router.Handle("DELETE /polls/{id}",
 		manager.With(
 			http.HandlerFunc(controllers.DeletePoll),
+			middleware.AuthMiddleware,
 		))
 
 	router.Handle("PUT /polls/{id}",
 		manager.With(
 			http.HandlerFunc(controllers.UpdatePoll),
+			middleware.AuthMiddleware,
 		))
 }

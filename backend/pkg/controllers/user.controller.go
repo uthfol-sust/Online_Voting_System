@@ -10,13 +10,19 @@ import (
 	"strconv"
 )
 
+type userLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type UserController interface {
 	SingUp(w http.ResponseWriter, r *http.Request)
-	// Login(w http.ResponseWriter, r *http.Request)
+	Login(w http.ResponseWriter, r *http.Request)
 	GetAll(w http.ResponseWriter, r *http.Request)
 	GetByID(w http.ResponseWriter, r *http.Request)
 	Update(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
+	RefreshToken(w http.ResponseWriter, r *http.Request)
 }
 
 type userController struct {
@@ -44,6 +50,29 @@ func (c *userController) SingUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.JSONResponse(w, 201, "User Created Successfully", res)
+}
+
+func (c *userController) Login(w http.ResponseWriter, r *http.Request) {
+	user := &userLogin{}
+	utils.ParseBody(r, user)
+
+	loggedUser, accessToken, refreshToken, err := c.userService.Login(user.Email, user.Password)
+	if err != nil {
+		utils.ErrorJSON(w, 500, err)
+		return
+	}
+
+	err = c.userService.SetToken(loggedUser.ID, refreshToken)
+	if err != nil {
+		utils.ErrorJSON(w, 500, err)
+		return
+	}
+
+	utils.JSONResponse(w, 200, "User Login Successfully", map[string]interface{}{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+		"user_email":    user.Email,
+	})
 }
 
 func (c *userController) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -140,4 +169,22 @@ func (c *userController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.JSONResponse(w, 200, "User Updated Successfully", res)
+}
+
+func (c *userController) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	utils.ParseBody(r, &body)
+
+	access, refresh, err := c.userService.Refresh(body.RefreshToken)
+	if err != nil {
+		utils.ErrorJSON(w, 401, err)
+		return
+	}
+
+	utils.JSONResponse(w, 200, "Token refreshed", map[string]string{
+		"access_token":  access,
+		"refresh_token": refresh,
+	})
 }

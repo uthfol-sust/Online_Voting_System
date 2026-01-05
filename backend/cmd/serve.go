@@ -41,7 +41,7 @@ func Serve() {
 	mux := http.NewServeMux()
 
 	//repositories
-	userRepo := repositories.NewUserRepository(db)
+	userRepo := repositories.NewUserRepository(db, rdb.Client)
 	pollRepo := repositories.NewPollRepository(db)
 
 	//service
